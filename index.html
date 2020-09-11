@@ -1,1 +1,166 @@
-First page
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js"></script>
+</head>
+<body>
+
+<h1>Images Comparison Slider</h1>
+
+<input type="file" id="files_left" multiple>
+<input type="file" id="files_right" multiple>
+
+<button onclick="nav(-1)">Previous</button> <button id="playbtn" onclick="play()">Play</button> <button onclick="nav(+1)">Next</button>
+<label id="frame_id">0</label>
+<br><br>
+<div class="img-comp-container">
+    <div class="img-comp-img">
+      <img id="right" src="">
+    </div>
+    <div class="img-comp-img img-comp-overlay">
+      <img id="left" src="" width="1920" height="1080">
+    </div>
+  </div>
+<br>
+<br/>
+
+<script>
+    /*Execute a function that will execute an image compare function for each element with the img-comp-overlay class:*/
+    initComparisons();
+
+    var state_play = false;
+    var idx = 0;
+    var left_img = [];
+    var right_img = [];
+    var total_frames = 0;
+
+    window.onload = () => {
+      function loadImage(image) {
+        return new Promise(function (resolve, reject) {
+          var fileReader = new FileReader();
+          fileReader.onload = function (e) {
+            resolve(e.target.result);
+          };
+          fileReader.readAsDataURL(image);
+        });
+      }
+      
+      function selectImgChange(e, side) {
+        frames = [];
+        promise_arr = [];
+        for (i=0;i<e.target.files.length;i++) {
+          var file = e.target.files[i];
+          if(file.type.match('image.*')) {
+            arr = loadImage(file);
+            promise_arr.push(arr);
+          } else {
+            alert("not an image");
+          }
+        }
+        Promise.all(promise_arr).then((results)=>{
+          if (side == "left") {
+            left_img = [];
+          } else {
+            right_img = [];
+          }
+          for (result in results) {
+            frames.push(results[result]);
+          }
+          loadFrames(side, frames);
+        })
+      }
+
+      document.getElementById("files_left").onchange = function(e) {
+        selectImgChange(e, 'left');
+        /*
+        frames = [];
+        promise_arr = [];
+        for (i=0;i<this.files.length;i++) {
+          var file = this.files[i];
+          if(file.type.match('image.*')) {
+            arr = loadImage(file);
+            promise_arr.push(arr);
+          } else {
+            alert("not an image");
+          }
+        }
+        Promise.all(promise_arr).then((results)=>{
+          left_img = [];
+          for (result in results) {
+            frames.push(results[result]);
+          }
+          loadFrames('left', frames);
+        })
+        */
+      };
+
+      document.getElementById("files_right").onchange = function(e) {
+        selectImgChange(e, 'right');
+        /*
+        frames = [];
+        promise_arr = [];
+        for (i=0;i<this.files.length;i++) {
+          var file = this.files[i];
+          if(file.type.match('image.*')) {
+            arr = loadImage(file);
+            promise_arr.push(arr);
+          } else {
+            alert("not an image");
+          }
+        }
+        Promise.all(promise_arr).then((results)=>{
+          right_img = [];
+          for (result in results) {
+            frames.push(results[result]);
+          }
+          loadFrames('right', frames);
+        })
+        */
+      };
+    }
+
+    function loadFrames(side, frames) {
+      console.log('loadFrames....');
+      idx = 0;
+      arr = [];
+      document.getElementById("frame_id").innerHTML = idx;
+      if (side == "left") {
+        arr = left_img;
+      } else {
+        arr = right_img;
+      }
+      for (frame in frames) {
+        arr.push(frames[frame]);
+      }
+      total_frames = arr.length;
+    }
+
+    function nav(dir) {
+      if (idx + dir < 1 || idx + dir > total_frames) {
+        alert('idx out of bound')
+        return
+      }
+      idx = idx + dir;
+      document.getElementById("frame_id").innerHTML = idx;
+      document.getElementById("left").src = left_img[idx-1];
+      document.getElementById("right").src = right_img[idx-1];
+    }
+
+    function play() {
+      btn = document.getElementById("playbtn");
+      if (state_play) {
+        btn.innerText = "Play";
+      } else {
+        btn.innerText = "Stop";
+      }
+      //play or stop cmd
+      alert("yet support!");
+      //
+      state_play = !state_play;
+    }
+</script>
+
+</body>
+</html>
