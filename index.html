@@ -7,12 +7,8 @@
     <title>Image Comparison Slider</title>
 </head>
 <body>
-
 <h1>Images Comparison Slider</h1>
-
-<input type="file" id="files_left" multiple>
-<input type="file" id="files_right" multiple>
-
+<input type="file" id="files_left" multiple><input type="file" id="files_right" multiple>
 <button onclick="nav(-1)">Previous</button> <button id="playbtn" onclick="play()">Play</button> <button onclick="nav(+1)">Next</button>
 <label id="frame_id">0</label>
 <br><br>
@@ -36,6 +32,7 @@
     var left_img = [];
     var right_img = [];
     var total_frames = 0;
+    var refreshIntervalId = 0;
 
     window.onload = () => {
       function loadImage(image) {
@@ -75,50 +72,10 @@
 
       document.getElementById("files_left").onchange = function(e) {
         selectImgChange(e, 'left');
-        /*
-        frames = [];
-        promise_arr = [];
-        for (i=0;i<this.files.length;i++) {
-          var file = this.files[i];
-          if(file.type.match('image.*')) {
-            arr = loadImage(file);
-            promise_arr.push(arr);
-          } else {
-            alert("not an image");
-          }
-        }
-        Promise.all(promise_arr).then((results)=>{
-          left_img = [];
-          for (result in results) {
-            frames.push(results[result]);
-          }
-          loadFrames('left', frames);
-        })
-        */
       };
 
       document.getElementById("files_right").onchange = function(e) {
         selectImgChange(e, 'right');
-        /*
-        frames = [];
-        promise_arr = [];
-        for (i=0;i<this.files.length;i++) {
-          var file = this.files[i];
-          if(file.type.match('image.*')) {
-            arr = loadImage(file);
-            promise_arr.push(arr);
-          } else {
-            alert("not an image");
-          }
-        }
-        Promise.all(promise_arr).then((results)=>{
-          right_img = [];
-          for (result in results) {
-            frames.push(results[result]);
-          }
-          loadFrames('right', frames);
-        })
-        */
       };
     }
 
@@ -152,7 +109,6 @@
       document.getElementById("right").src = right_img[idx-1];
     }
 
-    var refreshIntervalId = 0;
     function play() {
       btn = document.getElementById("playbtn");
       state_play = !state_play;
@@ -170,8 +126,8 @@
     }
 
     var canvas = document.createElement("canvas");
-    canvas.width = 1920;
-    canvas.height = 1080;
+    canvas.width = 1920; //temp hard-code
+    canvas.height = 1080; //temp hard-code
     ctx = canvas.getContext('2d');
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
