@@ -140,7 +140,10 @@
 
     function nav(dir) {
       if (idx + dir < 1 || idx + dir > total_frames) {
-        alert('idx out of bound')
+        alert('playing out of bound!');
+        clearInterval(refreshIntervalId);
+        state_play = false;
+        document.getElementById("playbtn").innerText = "Play";
         return
       }
       idx = idx + dir;
@@ -149,17 +152,21 @@
       document.getElementById("right").src = right_img[idx-1];
     }
 
+    var refreshIntervalId = 0;
     function play() {
       btn = document.getElementById("playbtn");
+      state_play = !state_play;
       if (state_play) {
-        btn.innerText = "Play";
-      } else {
         btn.innerText = "Stop";
+      } else {
+        btn.innerText = "Play";
       }
       //play or stop cmd
-      alert("yet support!");
-      //
-      state_play = !state_play;
+      if (state_play) {
+        refreshIntervalId = setInterval(function(){ nav(1) }, 1000/25);
+      } else {
+        clearInterval(refreshIntervalId);
+      }
     }
 
     var canvas = document.createElement("canvas");
